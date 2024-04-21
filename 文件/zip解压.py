@@ -1,3 +1,8 @@
+"""
+zip解压常用方法
+namelist(): 返回ZIP文件中所有文件和文件夹的名称列表。这只是一个简单的字符串列表，其中每个字符串代表ZIP中的一个文件或文件夹的路径。
+infolist(): 返回一个ZipInfo对象的列表，每个ZipInfo对象都代表ZIP文件中的一个成员（文件或文件夹），并包含该成员的详细信息，如文件名、文件大小、修改时间等。
+"""
 import os
 import shutil
 from zipfile import ZipFile
