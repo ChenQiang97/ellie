@@ -37,6 +37,29 @@ def unzip_and_merge_to_folders(zip_filepath, dest_folder, is_update=False):
                 print(f"目标子文件夹{dir}已存在，跳过")
 
 
+def mearge_gt(gt_file_path, GT_FILE_PATH=None):
+    """
+    合并gt文件
+    :param gt_file_path: 项目总gt文件路径
+    :param GT_FILE_PATH: 新增的gt文件路径
+    :return:
+    """
+    # 读取项目总gt文件
+    with open(os.path.join(GT_FILE_PATH, os.path.basename(gt_file_path)), "r") as f:
+        lines = f.readlines()
+        gt_list = [line.strip() for line in lines]
+
+    # 读取新增gt文件
+    with open(gt_file_path, "r") as ff:
+        ff_lines = ff.readlines()
+        ff_list = [line.strip() for line in ff_lines]
+        # 合并gt列表
+        gt_list.extend(ff_list)
+
+
+    with open(os.path.join(GT_FILE_PATH, os.path.basename(gt_file_path)), "w") as f:
+        for gt in set(gt_list):
+            f.write(gt + "\n")
 
 def check_txt_and_folder(folder_path):
     # 检查txt文件和对应的文件夹是否存在
