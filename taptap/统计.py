@@ -20,15 +20,17 @@ class Report(mongoengine.Document):
     meta = {
         'collection': 'reports'
     }
-    report_id = mongoengine.StringField(required=True, unique=True) #`
-    report_name = mongoengine.StringField(required=True) # 报告名称
-    data_id = mongoengine.StringField(required=True) # 数据ID
-    tool_version = mongoengine.StringField(required=True) # 工具版本号
-    accuracy = mongoengine.FloatField(required=True)    # 正确率
-    false_positive = mongoengine.IntField(required=True)    # 误触数量
-    total = mongoengine.IntField(required=True) # 总数
-    success = mongoengine.IntField(required=True) # 成功识别数量
+    report_id = mongoengine.StringField(required=True, unique=True)  # `
+    report_name = mongoengine.StringField(required=True)  # 报告名称
+    data_id = mongoengine.StringField(required=True)  # 数据ID
+    tool_version = mongoengine.StringField(required=True)  # 工具版本号
+    accuracy = mongoengine.FloatField(required=True)  # 正确率
+    false_positive = mongoengine.IntField(required=True)  # 误触数量
+    total = mongoengine.IntField(required=True)  # 总数
+    success = mongoengine.IntField(required=True)  # 成功识别数量
     create_time = mongoengine.DateTimeField(required=True)
+    # 结果字典
+    result = mongoengine.DictField()
 
     is_deleted = mongoengine.IntField(default=0)
 
@@ -59,8 +61,26 @@ def generate_test_data():
             # 成功识别数量
             "success": random.randint(0, 100),
             # 创建时间
-            "create_time": datetime.datetime.now()
+            "create_time": datetime.datetime.now(),
+            "result": {}
         }
+        for i in range(1, 25):
+            item["result"][f"AP{i}"] = {
+                "accuracy": random.random(),
+                "total": random.randint(100, 1000),
+                "success": random.randint(0, 100)
+            }
+        item["result"]["AN_ALL"] = {
+            "accuracy": random.random(),
+            "total": random.randint(100, 1000),
+            "success": random.randint(0, 100)
+        }
+
+        for i in range(1, 11):
+            item["result"][f"BN{i}"] = {
+                "false_positive": random.randint(0, 100)
+            }
+        item["result"]["BN_ALL"]["false_positive"] = random.randint(0, 100)
         items.append(item)
         Report(**item).save()
         print(item)
@@ -79,6 +99,8 @@ for tool_version in tool_version_list:
     print(f"tool_version: {tool_version}, data_id: {tool_version_data_id_list}")
 
 print(data_id_list)
+
+
 # 函数: 子列表取交集
 def get_common_data_id(data_id_list):
     """
@@ -94,6 +116,7 @@ def get_common_data_id(data_id_list):
 
     # 将集合转回列表并返回
     return list(common_data_id)
+
 
 common_data_id = get_common_data_id(data_id_list)
 
@@ -117,10 +140,10 @@ reposts = list(Report.objects(is_deleted=0, data_id__in=common_data_id).aggregat
 for data_id in common_data_id:
     item = {
         "data_id": data_id,
-        "accuracy":{},
-        "false_positive":{},
-        "total":{},
-        "success":{}
+        "accuracy": {},
+        "false_positive": {},
+        "total": {},
+        "success": {}
     }
     for repost in reposts:
         if repost["data_id"] == data_id:
@@ -132,10 +155,7 @@ for data_id in common_data_id:
             item["total"][tool_version] = repost["total"]
             item["success"][tool_version] = repost["success"]
 
-
     print(item)
-
-
 
 # 统计各版本工具的平均正确率和平均误触数量
 pipeline = [
