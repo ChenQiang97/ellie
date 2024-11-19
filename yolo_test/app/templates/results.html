@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>识别结果</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">识别结果</h1>
+        {% for result in results %}
+            <h2 class="mt-4">处理后的图像</h2>
+            <img src="{{ url_for('send_image', filename=result.processed_image) }}" class="img-fluid" alt="Processed Image">
+
+            <h2 class="mt-4">检测到的对象</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>边界框</th>
+                        <th>置信度</th>
+                        <th>类别 ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detection in result.predictions %}
+                        <tr>
+                            <td>{{ detection.box }}</td>
+                            <td>{{ detection.confidence }}</td>
+                            <td>{{ detection.class_id }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endfor %}
+
+        <a href="/" class="btn btn-primary mt-4">返回首页</a>
+    </div>
+</body>
+</html>

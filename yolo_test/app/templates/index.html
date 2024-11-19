@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLOv8 图像识别</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">YOLOv8 图像识别</h1>
+        <form action="/predict" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="task_type">选择任务类型：</label>
+                <select class="form-control" id="task_type" name="task_type">
+                    <option value="detect">检测</option>
+                    <option value="seg">分割</option>
+                    <option value="pose">姿态估计</option>
+                    <option value="track">跟踪</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="images">选择图像文件（可以多选）：</label>
+                <input type="file" class="form-control-file" id="images" name="images" accept="image/*" multiple required>
+            </div>
+            <button type="submit" class="btn btn-primary">上传并预测</button>
+        </form>
+    </div>
+</body>
+</html>
